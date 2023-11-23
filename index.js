@@ -33,13 +33,36 @@ app.use("/", categoriesController);
 
 app.use("/", articlesController);
 
-app.get('/', async (req, res) => {
+app.get("/", async (req, res) => {
     try {
-        res.render('index');
+        Article.findAll({
+            order: [
+                ["id", "desc"]
+            ]
+        }).then(articles => {
+            res.render('index', { articles });
+        });
     } catch (error) {
         console.error('Erro na rota:', error);
         res.status(500).send('Erro ao executar a rota');
     }
+});
+
+app.get("/:slug", (req, res) => {
+    var slug = req.params.slug;
+    Article.findOne({
+        where: {
+            slug
+        }
+    }).then(article => {
+        if(article) {
+            res.render("article", { article });
+        } else {
+            res.redirect("/");
+        }
+    }).catch(err => {
+        res.redirect("/");
+    })
 });
 
 http.listen(8000, () => {
