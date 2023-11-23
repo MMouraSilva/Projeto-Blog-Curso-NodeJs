@@ -40,7 +40,9 @@ app.get("/", async (req, res) => {
                 ["id", "desc"]
             ]
         }).then(articles => {
-            res.render('index', { articles });
+            Category.findAll().then(categories => {
+                res.render('index', { articles, categories });
+            });
         });
     } catch (error) {
         console.error('Erro na rota:', error);
@@ -56,13 +58,36 @@ app.get("/:slug", (req, res) => {
         }
     }).then(article => {
         if(article) {
-            res.render("article", { article });
+            Category.findAll().then(categories => {
+                res.render('article', { article, categories });
+            });
         } else {
             res.redirect("/");
         }
     }).catch(err => {
         res.redirect("/");
     })
+});
+
+app.get("/category/:slug", (req, res) => {
+    var slug = req.params.slug;
+
+    Category.findOne({
+        where: {
+            slug
+        },
+        include: [{ model: Article }]
+    }).then(category => {
+        if(category) {
+            Category.findAll().then(categories => {
+                res.render("index", { articles: category.articles, categories });
+            });
+        } else {
+            res.redirect("/");
+        }
+    }).catch(err => {
+        res.redirect("/");
+    });
 });
 
 http.listen(8000, () => {
