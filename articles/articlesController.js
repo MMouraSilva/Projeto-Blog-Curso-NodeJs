@@ -82,4 +82,41 @@ router.post("/articles/update", (req, res) => {
     });
 });
 
+router.get("/articles/page/:num", (req, res) => {
+    var page = req.params.num;
+    var offset = 0;
+
+    if(isNaN(page) || page == 1 || page == 0) {
+        offset = 0;
+    } else {
+        offset = (parseInt(page) - 1) * 4;
+    }
+
+    Article.findAndCountAll({
+        order: [
+            ["id", "desc"]
+        ],
+        limit: 4,
+        offset
+    }).then(articles => {
+        var next;
+
+        if(offset + 4 >= articles.count) {
+            next = false;
+        } else {
+            next = true;
+        }
+        
+        var result = {
+            page: parseInt(page),
+            next,
+            articles
+        }
+
+        Category.findAll().then(categories => {
+            res.render("admin/articles/page", { result, categories });
+        });
+    });
+});
+
 module.exports = router;
