@@ -55,7 +55,7 @@ router.get("/admin/categories/edit/:id", (req, res) => {
     }).catch(erro => {
         res.redirect("/admin/categories");
     });
-})
+});
 
 router.post("/categories/update", (req, res) => {
     var id = req.body.id;

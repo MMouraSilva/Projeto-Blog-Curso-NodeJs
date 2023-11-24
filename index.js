@@ -6,9 +6,11 @@ const connection = require("./database/database");
 
 const categoriesController = require("./categories/categoriesController");
 const articlesController = require("./articles/articlesController");
+const usersController = require("./users/usersController");
 
 const Article = require("./articles/Article");
 const Category = require("./categories/Category");
+const User = require("./users/User");
 
 // Indicando para o Express utilizar o EJS como View Engine
 app.set('view engine', 'ejs');
@@ -32,6 +34,8 @@ connection
 app.use("/", categoriesController);
 
 app.use("/", articlesController);
+
+app.use("/", usersController);
 
 app.get("/", async (req, res) => {
     try {
